@@ -4,10 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "go": "npx ts-node src/quickstart.ts",
-    "tool": "npx ts-node src/tools.ts",
-    "balance": "npx ts-node src/balance.ts",
-    "tx": "npx ts-node src/transfer.ts"
+    "transfer": "npx ts-node src/initia-transfer.ts"
   },
   "keywords": [],
   "author": "",
