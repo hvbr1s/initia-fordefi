@@ -22,3 +22,10 @@ export interface AminoSignDoc {
     }>;
     sequence: string;
 }
+
+export interface TransferConfig {
+    amountToTransfer: string;  
+    destination: string;       
+    gasLimit: number;         
+    gasPrice: string;         
+}
