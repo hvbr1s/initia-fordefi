@@ -2,8 +2,8 @@ import dotenv from 'dotenv';
 import { signWithApiSigner } from '../api_request/signer';
 import { createAndSignTx } from '../api_request/pushToApi';
 import { ethers } from 'ethers';
-import { fordefiConfig } from './config';
-import { getProvider } from './get-provider';
+import { fordefiConfig, PATH, PK_PATH, DESTINATION, FORDEFI_EVM_VAULT_ID } from './config';
+import { getProvider } from '../utils/get-provider';
 import { 
   RESTClient,
   MsgSend,
@@ -17,17 +17,10 @@ import {
   EthPublicKey,
   Coin
 } from '@initia/initia.js';
+import { AminoSignDoc } from '../utils/interfaces'
 import { toHex, fromHex, toBase64, fromBase64 } from '@cosmjs/encoding';
 
 dotenv.config();
-
-// Config
-const FORDEFI_API_USER_TOKEN = fordefiConfig.apiUserToken!;
-const FORDEFI_EVM_VAULT_ID = process.env.FORDEFI_EVM_VAULT_ID!;
-const PATH = '/api/v1/transactions/create-and-wait';
-const PK_PATH = './fordefi_secret/private.pem';
-const DESTINATION = 'init1akp3t73wcnwsm2v8p0uv64lt7ft2jpmjk9e02c' // Destination address on Initia
-const ETH_ADDRESS = "0x8BFCF9e2764BC84DE4BBd0a0f5AAF19F47027A73"; // Your Fordefi Vault address
 
 async function main() {
   const eip1193 = await getProvider(fordefiConfig);
@@ -35,12 +28,12 @@ async function main() {
 
   const web3Provider = new ethers.BrowserProvider(eip1193);
   const ethSigner = await web3Provider.getSigner();
-  console.log('Ethereum address:', ETH_ADDRESS);
+  console.log('Ethereum address:', fordefiConfig.address);
 
   const ethPubKey = await getEthPublicKey(ethSigner);
   console.log("EthPubkey ->", ethPubKey)
   const converter = require("bech32-converting")
-  const initiaAddress = converter('init').toBech32(ETH_ADDRESS);
+  const initiaAddress = converter('init').toBech32(fordefiConfig.address);
   console.log('Initia address:', initiaAddress);
 
   await executeTxWithFordefi(initiaAddress, ethPubKey);
@@ -65,7 +58,7 @@ async function executeTxWithFordefi(
   const msg = new MsgSend(
     initiaAddress,    // from_address
     DESTINATION,      // to_address
-    [new Coin('uinit', '100000')] // 0.1 INIT
+    [new Coin('uinit', '10000')] // 0.01 INIT
   );
 
   const fee = new Fee(5000000, [new Coin('uinit', '310600')]);
@@ -127,7 +120,7 @@ async function fordefiSignEIP191(signDocData: {
     throw new Error(`Unsupported message type: ${msg.constructor.name}`);
   });
 
-  const aminoSignDoc = {
+  const aminoSignDoc: AminoSignDoc = {
     account_number: signDocData.accountNumber.toString(),
     chain_id: signDocData.chainId,
     fee: feeAmino,
@@ -172,7 +165,7 @@ async function fordefiSignEIP191(signDocData: {
 
   const response = await createAndSignTx(
     PATH,
-    FORDEFI_API_USER_TOKEN,
+    fordefiConfig.apiUserToken,
     headerSig,
     ts,
     bodyJSON,

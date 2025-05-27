@@ -4,6 +4,10 @@ import fs from 'fs'
 
 dotenv.config();
 
+export const PATH = '/api/v1/transactions/create-and-wait';
+export const PK_PATH = './fordefi_secret/private.pem';
+export const DESTINATION = 'init1akp3t73wcnwsm2v8p0uv64lt7ft2jpmjk9e02c' // Destination address on Initia
+export const FORDEFI_EVM_VAULT_ID = process.env.FORDEFI_EVM_VAULT_ID
 
 export const fordefiConfig: FordefiProviderConfig = {
     chainId: 8453, // Base but doesn't really matter
