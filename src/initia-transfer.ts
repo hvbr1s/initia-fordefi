@@ -21,7 +21,8 @@ import { toHex, fromHex, toBase64, fromBase64 } from '@cosmjs/encoding';
 
 dotenv.config();
 
-const FORDEFI_API_USER_TOKEN = process.env.FORDEFI_API_USER_TOKEN!;
+// Config
+const FORDEFI_API_USER_TOKEN = fordefiConfig.apiUserToken!;
 const FORDEFI_EVM_VAULT_ID = process.env.FORDEFI_EVM_VAULT_ID!;
 const PATH = '/api/v1/transactions/create-and-wait';
 const PK_PATH = './fordefi_secret/private.pem';
