@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { signWithApiSigner } from '../api_request/signer';
 import { createAndSignTx } from '../api_request/pushToApi';
 import { getProvider } from '../utils/get-provider';
+import { createRequest } from '../api_request/form_request';
 import { 
   RESTClient,
   MsgSend,
@@ -61,7 +62,7 @@ async function executeTxWithFordefi(
     [new Coin('uinit', transferConfig.amountToTransfer)] 
   );
 
-  const fee = new Fee(500000, [new Coin('uinit', '100000')]);
+  const fee = new Fee(transferConfig.gasLimit, [new Coin('uinit', transferConfig.gasPrice)]);
   const modeInfo  = new ModeInfo(
     new ModeInfo.Single(SignMode.SIGN_MODE_EIP_191) 
   );
@@ -142,20 +143,9 @@ async function fordefiSignEIP191(signDocData: {
 
   const sortedSignDoc = sortObject(aminoSignDoc);
   const message = JSON.stringify(sortedSignDoc);
-  
-  const reqBody = {
-    signer_type: 'api_signer',
-    sign_mode: 'auto',
-    type: 'evm_message',
-    details: {
-      type: 'personal_message_type',
-      raw_data: message,
-      chain: 'ethereum_mainnet',
-    },
-    vault_id: FORDEFI_EVM_VAULT_ID,
-    wait_for_state : 'signed',
-  };
-  
+
+  const reqBody = await createRequest(FORDEFI_EVM_VAULT_ID, message)
+    
   const bodyJSON = JSON.stringify(reqBody);
   const ts = Date.now();
   const payload = `${PATH}|${ts}|${bodyJSON}`;

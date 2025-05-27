@@ -6,14 +6,14 @@ dotenv.config();
 
 export const PATH = '/api/v1/transactions/create-and-wait';
 export const PK_PATH = './fordefi_secret/private.pem';
-export const FORDEFI_EVM_VAULT_ID = process.env.FORDEFI_EVM_VAULT_ID
+export const FORDEFI_EVM_VAULT_ID = process.env.FORDEFI_EVM_VAULT_ID ?? (() => { throw new Error('FORDEFI_EVM_VAULT_ID is not set'); })()
 
 export const transferConfig = {
     amountToTransfer: '10000', // Amount in smallest unit (e.g., '10000' for 0.01 INIT)
     destination: 'init1akp3t73wcnwsm2v8p0uv64lt7ft2jpmjk9e02c',
     gasLimit: 500000,  // Gas limit for the transaction
-    gasPrice: '1000' // Gas price in smallest INIT unit
-}
+    gasPrice: '10000' // Gas price in smallest INIT unit
+};
 
 export const fordefiConfig: FordefiProviderConfig = {
     chainId: 1, // Ethereum mainnet but not very important as we'll only be signing messages
