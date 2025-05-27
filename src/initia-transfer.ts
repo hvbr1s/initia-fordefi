@@ -18,7 +18,7 @@ import {
 } from '@initia/initia.js';
 import { AminoSignDoc } from '../utils/interfaces'
 import { toHex, fromHex, toBase64, fromBase64 } from '@cosmjs/encoding';
-import { fordefiConfig, PATH, PK_PATH, DESTINATION, FORDEFI_EVM_VAULT_ID, AMOUNT } from './config';
+import { fordefiConfig, transferConfig, PATH, PK_PATH, FORDEFI_EVM_VAULT_ID } from './config';
 
 dotenv.config();
 
@@ -57,8 +57,8 @@ async function executeTxWithFordefi(
 
   const msg = new MsgSend(
     initiaAddress,   
-    DESTINATION,      
-    [new Coin('uinit', AMOUNT)] 
+    transferConfig.destination,      
+    [new Coin('uinit', transferConfig.amountToTransfer)] 
   );
 
   const fee = new Fee(500000, [new Coin('uinit', '100000')]);
