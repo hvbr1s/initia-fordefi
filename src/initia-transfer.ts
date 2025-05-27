@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { signWithApiSigner } from '../api_request/signer';
 import { createAndSignTx } from '../api_request/pushToApi';
 import { ethers } from 'ethers';
-import { fordefiConfig, PATH, PK_PATH, DESTINATION, FORDEFI_EVM_VAULT_ID } from './config';
+import { fordefiConfig, PATH, PK_PATH, DESTINATION, FORDEFI_EVM_VAULT_ID, AMOUNT } from './config';
 import { getProvider } from '../utils/get-provider';
 import { 
   RESTClient,
@@ -58,7 +58,7 @@ async function executeTxWithFordefi(
   const msg = new MsgSend(
     initiaAddress,    // from_address
     DESTINATION,      // to_address
-    [new Coin('uinit', '10000')] // 0.01 INIT
+    [new Coin('uinit', AMOUNT)] // 0.01 INIT
   );
 
   const fee = new Fee(5000000, [new Coin('uinit', '310600')]);
