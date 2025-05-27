@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
+import { ethers } from 'ethers';
 import { signWithApiSigner } from '../api_request/signer';
 import { createAndSignTx } from '../api_request/pushToApi';
-import { ethers } from 'ethers';
-import { fordefiConfig, PATH, PK_PATH, DESTINATION, FORDEFI_EVM_VAULT_ID, AMOUNT } from './config';
 import { getProvider } from '../utils/get-provider';
 import { 
   RESTClient,
@@ -19,6 +18,7 @@ import {
 } from '@initia/initia.js';
 import { AminoSignDoc } from '../utils/interfaces'
 import { toHex, fromHex, toBase64, fromBase64 } from '@cosmjs/encoding';
+import { fordefiConfig, PATH, PK_PATH, DESTINATION, FORDEFI_EVM_VAULT_ID, AMOUNT } from './config';
 
 dotenv.config();
 
@@ -56,12 +56,12 @@ async function executeTxWithFordefi(
   console.log('Account info:', { acctNumber, sequence });
 
   const msg = new MsgSend(
-    initiaAddress,    // from_address
-    DESTINATION,      // to_address
-    [new Coin('uinit', AMOUNT)] // 0.01 INIT
+    initiaAddress,   
+    DESTINATION,      
+    [new Coin('uinit', AMOUNT)] 
   );
 
-  const fee = new Fee(5000000, [new Coin('uinit', '310600')]);
+  const fee = new Fee(500000, [new Coin('uinit', '100000')]);
   const modeInfo  = new ModeInfo(
     new ModeInfo.Single(SignMode.SIGN_MODE_EIP_191) 
   );
@@ -94,7 +94,6 @@ async function fordefiSignEIP191(signDocData: {
   memo: string;
 }): Promise<string> {
 
-  // Fee in amino format
   const feeAmino = {
     amount: signDocData.fee.amount.toArray().map(coin => ({
       amount: coin.amount.toString(),
