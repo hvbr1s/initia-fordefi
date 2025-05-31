@@ -129,14 +129,14 @@ async function fordefiSignEIP191(signDocData: {
     sequence: signDocData.sequence.toString()
   };
 
-  function sortObject(obj: any): any {
+  function sortObject<T>(obj: T): T {
     if (Array.isArray(obj)) {
-      return obj.map(sortObject);
+        return obj.map(sortObject) as T;
     } else if (obj !== null && typeof obj === 'object') {
-      return Object.keys(obj).sort().reduce((result, key) => {
-        result[key] = sortObject(obj[key]);
-        return result;
-      }, {} as any);
+        return Object.keys(obj).sort().reduce((result, key) => {
+            result[key as keyof T] = sortObject(obj[key as keyof T]);
+            return result;
+        }, {} as T);
     }
     return obj;
   }
@@ -145,11 +145,9 @@ async function fordefiSignEIP191(signDocData: {
   const message = JSON.stringify(sortedSignDoc);
 
   const reqBody = await createRequest(FORDEFI_EVM_VAULT_ID, message)
-    
   const bodyJSON = JSON.stringify(reqBody);
   const ts = Date.now();
   const payload = `${PATH}|${ts}|${bodyJSON}`;
-
   const headerSig = await signWithApiSigner(PK_PATH, payload);  
 
   const response = await createAndSignTx(
